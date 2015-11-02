@@ -6,9 +6,11 @@
 
 T1T2FiberAnalyzer::T1T2FiberAnalyzer(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    para_File(QTGUI_XML_NAME)
 {
     ui->setupUi(this);
+    isSync = false;
     InitializeState();
 }
 
@@ -43,8 +45,8 @@ void T1T2FiberAnalyzer::initializePyPath(){
         if(checkpath.empty())
             ErrorReporter::fire("Failed to locate a python compiler in $PATH! Please configure it manually.");
         else{
-            for(std::string p: checkpath){
-                QDirIterator dirit(QString::fromStdString(p));
+            for(std::vector<std::string>::iterator p = checkpath.begin(); p != checkpath.end();p++){
+                QDirIterator dirit(QString::fromStdString(*p));
                 while(dirit.hasNext()){
                     QString fn = dirit.next();         
                     if(tool::checkExecutable(fn.toStdString()) && fn.toStdString().find("python") != std::string::npos){
@@ -188,8 +190,8 @@ void T1T2FiberAnalyzer::SyncToUI(){
 }
 
 void T1T2FiberAnalyzer::SyncToAtlasTableView(){
-    std::vector<std::vector<QString>> m = m_gui->getpara_CSVMatchTable();
-    for(std::vector<std::vector<QString>>::iterator it1 = m.begin(); it1 != m.end(); ++it1){
+    std::vector<std::vector<QString> > m = m_gui->getpara_CSVMatchTable();
+    for(std::vector<std::vector<QString> >::iterator it1 = m.begin(); it1 != m.end(); ++it1){
         // integrity check
         if (it1->size() != 2)
             continue;
@@ -204,8 +206,8 @@ void T1T2FiberAnalyzer::SyncToAtlasTableView(){
 }
 
 // issue: match subjectID, or match everything?
-std::vector<std::vector<QString>> T1T2FiberAnalyzer::SyncFromAtlasTableView(){
-    std::vector<std::vector<QString>> data;
+std::vector<std::vector<QString> > T1T2FiberAnalyzer::SyncFromAtlasTableView(){
+    std::vector<std::vector<QString> > data;
     for(unsigned int i =0; i < atlas->getDataSize(); i++){
         std::vector<QString> row;
         if(atlas->getCheckState(i))
@@ -229,8 +231,8 @@ void T1T2FiberAnalyzer::T12extractHeaders(){
         QComboBox* cb2 = ui->para_T12ComboSID;
         cb1->clear();
         cb2->clear();
-        for(std::string i : T12headers){
-            QString si = QString::fromStdString(i);
+        for(std::vector<std::string>::iterator i = T12headers.begin(); i != T12headers.end();i++){
+            QString si = QString::fromStdString(*i);
             cb1->addItem(si);
             cb2->addItem(si);
         }
@@ -252,8 +254,8 @@ void T1T2FiberAnalyzer::DTIextractHeaders(){
         QComboBox* cb2 = ui->para_DTIComboSID;
         cb1->clear();
         cb2->clear();
-        for(std::string i : DTIheaders){
-            QString si = QString::fromStdString(i);
+        for(std::vector<std::string>::iterator i = DTIheaders.begin(); i != DTIheaders.end() ; i++ ){
+            QString si = QString::fromStdString(*i);
             cb1->addItem(si);
             cb2->addItem(si);
         }
@@ -374,7 +376,7 @@ void T1T2FiberAnalyzer::on_T12BrowseBtn_clicked()
 {
     QString dir = ui->para_T12MapInputText->text();
     if(dir == NULL) return;
-    std::vector<std::vector<std::string>> csv_results;
+    std::vector<std::vector<std::string> > csv_results;
     std::vector<std::string> headers;
     if(dir != NULL){
         try{
@@ -394,7 +396,7 @@ void T1T2FiberAnalyzer::on_T12BrowseBtn_clicked()
 void T1T2FiberAnalyzer::on_DTIBrowseBtn_clicked()
 {
     QString dir = ui->para_DTIdefInputText->text();
-    std::vector<std::vector<std::string>> csv_results;
+    std::vector<std::vector<std::string> > csv_results;
     std::vector<std::string> headers;
     if(dir != NULL){
         try{

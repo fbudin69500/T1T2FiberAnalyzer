@@ -9,7 +9,8 @@ ScriptWriter* ScriptWriter::getInstance(QString tool, QString pipeline){
 }
 
 // to-do: enforce pathname to end with .py
-ScriptWriter::ScriptWriter(QString tool,QString pipeline){
+ScriptWriter::ScriptWriter(QString tool,QString pipeline): toollock(NULL)
+{
     tool_script = tool;
     pipeline_script = pipeline;
     hasTool = false;

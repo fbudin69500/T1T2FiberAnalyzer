@@ -74,8 +74,8 @@ private:
     FiberTractModel* tracts;
     ScriptWriter* writer;
     const QString* DEFAULT_PATH;
-    bool isSync = false;
-    QString para_File = QTGUI_XML_NAME;
+    bool isSync;
+    QString para_File ;
 
 
     // possible optimization: localize tje following four variables?
@@ -91,7 +91,7 @@ private:
     void SyncToUI();
     void SaveGuiValue();
     QMessageBox::StandardButton SaveGuiValue(QString filename);
-    std::vector<std::vector<QString>> SyncFromAtlasTableView();
+    std::vector<std::vector<QString> > SyncFromAtlasTableView();
     void SyncToAtlasTableView();
 
 protected:

@@ -85,7 +85,7 @@ void tool::parseMapContent(QString filename, map<string,TractData> &data, string
             QString::fromStdString(path),
             QString::fromStdString(sid)
         };
-        auto element = std::make_pair(sid,newTract);
+        std::pair<char*, tool::TractData> element = std::make_pair(sid,newTract);
         data.insert(element);
     }
 
@@ -107,14 +107,14 @@ bool tool::checkExecutable(string path){
 }
 
 // generic parsing of csv files
-vector<vector<string>> tool::parseCSV(string dir, vector<string> &attrs){
+vector<vector<string> > tool::parseCSV(string dir, vector<string> &attrs){
     csvparser scanner(QString::fromStdString(dir));
     attrs.clear();
     // header line                       
     char line[10000];
     scanner.next_line(line,sizeof(line));
     tokenize(line,",",attrs);
-    vector<vector<string>> results;
+    vector<vector<string> > results;
     // content
     // to-do: check for csv consistency
     while (scanner.next_line(line,sizeof(line))){

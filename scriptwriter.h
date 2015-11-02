@@ -21,7 +21,7 @@ private:
     ScriptWriter(QString tool, QString pipeline);
     QString tool_script;
     QString pipeline_script;
-    QLockFile* toollock = NULL;
+    QLockFile* toollock;
 
     bool hasTool;
     static ScriptWriter *writer;

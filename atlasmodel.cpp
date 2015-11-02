@@ -1,6 +1,6 @@
 #include "include/atlasmodel.h"
 #include <iostream>
-#include <unordered_set>
+#include <algorithm>
 #include <include/errorreporter.h>
 
 
@@ -10,7 +10,7 @@ AtlasModel::AtlasModel(QObject *parent, std::map<std::string,tool::TractData> db
     QAbstractTableModel(parent)
 {
     tract_db.clear();
-    unordered_set<std::string> found;
+    std::vector<std::string> found;
     bool wflag = true;
 
     // store the union of db1 and db2 into vector
@@ -26,7 +26,7 @@ AtlasModel::AtlasModel(QObject *parent, std::map<std::string,tool::TractData> db
             std::string mkey = itt->first;
 
             // one id is supposed to be matched only once
-            if(!found.empty() && found.find(mkey) != found.end()){
+            if(!found.empty() && std::find(found.begin(),found.end(),mkey) != found.end()){
                 if(wflag &&(key == mkey || mkey.find(key) != std::string::npos || key.find(mkey) != std::string::npos)){
                     wflag = false;
                     ErrorReporter::fire("Duplicate matches were found and eliminated!");
@@ -42,7 +42,7 @@ AtlasModel::AtlasModel(QObject *parent, std::map<std::string,tool::TractData> db
                     QString::fromStdString(mkey)
                 };
                 tract_db.push_back(mapd);
-                found.insert(mkey);
+                found.push_back(mkey);
                 break;
             }
             else if(key.length() <= mkey.length() && mkey.find(key) != std::string::npos){
@@ -53,7 +53,7 @@ AtlasModel::AtlasModel(QObject *parent, std::map<std::string,tool::TractData> db
                     QString::fromStdString(mkey)
                 };
                 tract_db.push_back(mapd);
-                found.insert(mkey);
+                found.push_back(mkey);
                 break;
             }
             else if(mkey.length() < key.length() && key.find(mkey) != std::string::npos){
@@ -64,7 +64,7 @@ AtlasModel::AtlasModel(QObject *parent, std::map<std::string,tool::TractData> db
                     QString::fromStdString(mkey)
                 };
                 tract_db.push_back(mapd);
-                found.insert(mkey);
+                found.push_back(mkey);
                 break;
             }
 
